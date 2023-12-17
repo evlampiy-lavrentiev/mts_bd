@@ -26,7 +26,7 @@ curl -o out_file.zip 'URL'
 """
 t2_bash = "unzip -o out_file.zip"
 
-t3_bash = """export PATH="" && hdfs dfs -put "charts_$(date +"%d-%m-%Y").csv" /user/hadoop/from_airflow"""
+t3_bash = """export PATH="" && hdfs dfs -put "charts_$(date +"%d-%m-%Y_%H:%M:%S").csv" /user/hadoop/from_airflow"""
 
 t4_bash = "echo 'Hello world!'"
 
