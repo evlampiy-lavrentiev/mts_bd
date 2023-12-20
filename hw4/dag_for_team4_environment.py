@@ -12,26 +12,29 @@ default_args = {
             'email_on_retry': False,
             'start_date': '2023-12-05',
             'retries': 1,
-            'retry_delay': timedelta(minutes=6000),
+            'retry_delay': timedelta(minutes=49),
             'catchup': False
 }
 
 dag = DAG(dag_id='testing_stuff',
           default_args=default_args,
           schedule_interval='50 * * * *',
-          dagrun_timeout=timedelta(seconds=1200))
+          dagrun_timeout=timedelta(seconds=1200),
+          concurrency=1,
+          max_active_runs=1,
+    )
 
 t1_bash = """
-curl -o out_file.zip 'URL'
+curl -L -o out_file.zip 'https://drive.google.com/uc?export=download&id=1vv959xARGmlzKsaFmZe-Z9DG2NKeUzOX'
 """
 t2_bash = "unzip -o out_file.zip"
 
-t3_bash = """export PATH="" && hdfs dfs -put "charts_$(date +"%d-%m-%Y_%H:%M:%S").csv" /user/hadoop/from_airflow"""
+t3_bash = """/usr/local/hadoop/bin/hdfs dfs -put Netflix%20TV%20Shows%20and%20Movies.csv /netflix_$(date +"%d-%m-%Y_%H-%M-%S")"""
 
 t4_bash = "echo 'Hello world!'"
 
 t5_bash = "rm out_file.zip"
-t6_bash = "rm charts.csv"
+t6_bash = "rm 'Netflix TV Shows and Movies.csv'"
 
 t1 = SSHOperator(ssh_conn_id='ssh_default',
                  task_id='get_dataset_from_web',
